@@ -14,3 +14,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'HomeController@index')->name('home');
+
+// авторизация
+
+Route::get('/signup', 'AuthController@getSignUp')->name('auth.signup');
+Route::post('/signup', 'AuthController@postSignUp');
+
+Route::get('/signin', 'AuthController@getSignIn')->name('auth.signin');
+Route::post('/signin', 'AuthController@postSignIn');
