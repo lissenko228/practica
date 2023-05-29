@@ -11,11 +11,11 @@
             <a class="nav-link active" aria-current="page" href="#">Стена</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Друзья</a>
+            <a class="nav-link" href="{{route('friend.index')}}">Друзья</a>
           </li>
           <li class="nav-item">
-            <form class="d-flex">
-              <input class="form-control me-2" type="search" placeholder="Что ищем" aria-label="Search">
+            <form method="get" action="{{route('search.results')}}" class="d-flex">
+              <input name="query" class="form-control me-2" type="search" placeholder="Что ищем" aria-label="Search">
               <button class="btn btn-success" type="submit">Найти</button>
             </form>
           </li>              
@@ -25,13 +25,13 @@
         @if (Auth::check())
             
           <li class="nav-item">
-            <a class="nav-link active" href="#">{{--{{Auth::user()->getNameOrUsername()}}--}}Имя</a>
+            <a class="nav-link active" href="{{route('profile.index', ['username' => Auth::user()->username])}}">{{Auth::user()->getNameOrUsername()}}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Обновить профиль</a>
+            <a class="nav-link" href="{{route('profile.edit')}}">Обновить профиль</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/">Выйти</a>
+            <a class="nav-link" href="{{route('auth.signout')}}">Выйти</a>
           </li>
         @else
           <li class="nav-item">
