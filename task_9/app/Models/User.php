@@ -41,4 +41,104 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // получить имя и фамилию или имя
+    public function getName()
+    {
+        if($this->first_name && $this->last_name)
+        {
+            return "{$this->first_name} {$this->last_name}";
+        }
+
+        if($this->first_name)
+        {
+            return $this->first_name;
+        }
+
+        return null;
+    }
+
+    // получить имя и фамилию или логин
+    public function getNameOrUsername()
+    {
+        return $this->getName() ?: $this->username;
+    }
+
+    // получить имя или логин
+    public function getFirstNameOrUsername()
+    {
+        return $this->first_name ?: $this->username;
+    }
+
+    //  получить аватарку из граватар
+    public function getAvatarUrl()
+    {
+        $email=md5("$this->email");
+        return "https://www.gravatar.com/avatar/$email?d=mp&s=50";
+    }
+
+    // устанавливаем отношения многие ко многим, мои друщья
+    public function friendsOfMine()
+    {
+        return $this->belongsToMany('App\Models\User', 'friends', 'user_id', 'friend_id');
+    }
+
+    // отношения многие ко многим, друг
+    public function friendOf()
+    {
+        return $this->belongsToMany('App\Models\User', 'friends', 'friend_id', 'user_id');
+    }
+
+    // получить друзей
+    public function friends()
+    {
+        return $this-> friendsOfMine()->wherePivot('accepted', true)->get()
+            ->merge($this-> friendOf()->wherePivot('accepted', true)->get());
+    }
+
+    // получить заявки в друзья
+    public function friendRequests()
+    {
+        return $this-> friendsOfMine()->wherePivot('accepted', false)->get();
+    }
+
+    // запрос на ожидание в друзья
+    public function friendRequestsPending()
+    {
+        return $this->friendOf()->wherePivot('accepted', false)->get();
+    }
+
+    // есть запрос на добавление в друзья
+
+    public function hasfriendRequestsPending(User $user)
+    {
+        return (bool) $this->friendRequestsPending()->where('id', $user->id)->count();
+    }
+
+    // получить запрос о дружбе
+    public function hasfriendRequestsReceived(User $user)
+    {
+        return (bool) $this->friendRequests()->where('id', $user->id)->count();
+    }
+
+    // добавить друга
+    public function addFriend(User $user)
+    {
+        $this->friendOf()->attach($user->id);
+    }
+
+    // принять запрос в друзья
+    public function acceptFriendRequests(User $user)
+    {
+        $this->friendRequests()->where('id', $user->id)->first()->pivot->update(
+            [
+                'accepted' => true
+            ]);
+    }
+
+    // уже в друзьях
+    public function isFriendWith(User $user)
+    {
+        return (bool) $this->friends()->where('id', $user->id)->count();
+    }
 }
