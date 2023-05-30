@@ -77,6 +77,18 @@ class User extends Authenticatable
         return "https://www.gravatar.com/avatar/$email?d=mp&s=50";
     }
 
+    // пользователю принадлежит статус
+    public function statuses()
+    {
+        return $this->hasMany('App\Models\Status', 'user_id');
+    }
+
+    // получить лайки пользователя
+    public function likes()
+    {
+        return $this->hasMany('App\Models\Like', 'user_id');
+    }
+
     // устанавливаем отношения многие ко многим, мои друщья
     public function friendsOfMine()
     {
@@ -127,6 +139,13 @@ class User extends Authenticatable
         $this->friendOf()->attach($user->id);
     }
 
+    // удалить из друзей
+    public function deleteFriend(User $user)
+    {
+        $this->friendOf()->detach($user->id);
+        $this->friendsOfMine()->detach($user->id);
+    }
+
     // принять запрос в друзья
     public function acceptFriendRequests(User $user)
     {
@@ -140,5 +159,11 @@ class User extends Authenticatable
     public function isFriendWith(User $user)
     {
         return (bool) $this->friends()->where('id', $user->id)->count();
+    }
+
+    //поставить лайк
+    public function hasLikedStatus(Status $status)
+    {
+        return (bool) $status->likes->where('likeable_id', $status->id)->where('likeable_type', get_class($status))->where('user_id', $this->id)->count();
     }
 }
