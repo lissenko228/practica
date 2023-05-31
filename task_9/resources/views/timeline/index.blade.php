@@ -31,7 +31,7 @@
         @else
             @foreach ($statuses as $status)
                 
-        <div class="media">
+        <div class="media" id="media">
             <div class="line-media-body">
                 <a class="me-3" href="{{route('profile.index', ['username' => $status->user->username])}}">
                     <img class="media-object rounded" src="{{$status->user->getAvatarUrl()}}" alt="{{$status->user->getNameOrUsername()}}">
@@ -121,7 +121,37 @@
         </div>
             @endforeach
 
-            {{$statuses->links()}}
+            {{-- {{$statuses->links()}} --}}
+            <div id="show-more">
+                <button type="button" class="btn btn-dark mb-5">Показать все</button>
+            </div>
+
+            {{-- аякс --}}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+            <script>
+                $(document).ready(function() {
+                    $('button').click(function(e) {
+                        e.preventDefault();
+
+                        var btn = $(this);
+
+                        $.ajax({
+                        method: "GET",
+                        url: "{{route('home')}}",
+                        dataType: "json",
+                        data: {
+                            
+                        },
+                        success: function(data) {
+                            console.log(data);
+                        },
+                        error: function(er) {
+                            console.log(er);
+                        }
+                        });
+                    })
+                    });
+            </script>
 
         @endif
 

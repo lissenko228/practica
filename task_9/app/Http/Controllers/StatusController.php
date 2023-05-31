@@ -71,7 +71,7 @@ class StatusController extends Controller
 
     public function deleteStatus($statusId)
     {
-        $status = Status::notReply()->find($statusId);
+        $status=Status::find($statusId);
 
         if(Auth::user()->id!==$status->user->id)
         {
