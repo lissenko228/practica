@@ -27,6 +27,18 @@ class HomeController extends Controller
 
     function showMore()
     {
-        dd();
+        if(Auth::check())
+        {
+            $statuses=Status::select('*')->where('user_id', Auth::user()->id)->orWhereIn('user_id', Auth::user()->friends()->pluck('id'))->orderBy('created_at', 'desc')->get();
+
+            $response['data']=$statuses;
+            return response()->json($response);
+            // ->orderBy('created_at', 'desc');
+            // print_r($statuses);
+            // return json_encode($statuses);  
+            // return view('timeline.index', compact('statuses'));
+        }
+
+        return redirect()->view('home');
     }
 }

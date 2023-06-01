@@ -13,8 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', 'HomeController@index')->name('home');
-Route::get('/showmore', 'HomeController@showMore')->middleware('auth')->name('home');
+
+// аякс
+
+Route::get('/showmore', 'HomeController@showMore')->middleware('auth')->name('showmore');
 
 // авторизация
 
@@ -43,6 +47,10 @@ Route::get('/friends/add/{username}', 'FriendController@getAdd')->middleware('au
 Route::get('/friends/accept/{username}', 'FriendController@getAccept')->middleware('auth')->name('friend.accept');
 Route::post('/friends/delete/{username}', 'FriendController@postDelete')->middleware('auth')->name('friend.delete');
 
+Route::get('/friends/delete/{username}', function (){
+    return redirect('/');
+});
+
 // стена
 
 Route::post('/status', 'StatusController@postStatus')->middleware('auth')->name('status.post');
@@ -51,3 +59,10 @@ Route::post('/status/{statusId}/reply', 'StatusController@postReply')->middlewar
 Route::get('/status/{statusId}/like', 'StatusController@getLike')->middleware('auth')->name('status.like');
 
 Route::get('/status/{statusId}/delete', 'StatusController@deleteStatus')->middleware('auth')->name('status.delete');
+
+Route::get('/status', function (){
+    return redirect('/');
+});
+Route::get('/status/{statusId}/reply', function (){
+    return redirect('/');
+});
