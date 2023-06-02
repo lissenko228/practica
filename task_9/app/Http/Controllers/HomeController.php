@@ -12,8 +12,8 @@ class HomeController extends Controller
     {
         if(Auth::check())
         {
-            $statuses=Status::notReply()->where
-            (function($query)
+            $statuses=Status::notReply()->where(
+                function($query)
                 {
                     return $query->where('user_id', Auth::user()->id)->orWhereIn('user_id', Auth::user()->friends()->pluck('id'));
                 }
@@ -29,14 +29,25 @@ class HomeController extends Controller
     {
         if(Auth::check())
         {
-            $statuses=Status::select('*')->where('user_id', Auth::user()->id)->orWhereIn('user_id', Auth::user()->friends()->pluck('id'))->orderBy('created_at', 'desc')->get();
 
-            $response['data']=$statuses;
-            return response()->json($response);
-            // ->orderBy('created_at', 'desc');
-            // print_r($statuses);
-            // return json_encode($statuses);  
-            // return view('timeline.index', compact('statuses'));
+            $statuses=Status::notReply()->where(
+                function($query)
+                {
+                    return $query->where('user_id', Auth::user()->id)->orWhereIn('user_id', Auth::user()->friends()->pluck('id'));
+                }
+            )->orderBy('created_at', 'desc')->get();
+
+            return view('timeline.showmore', compact('statuses'));
+
+            // $statuses=Status::notReply()->where(
+            //     function($query)
+            //     {
+            //         return $query->where('user_id', Auth::user()->id)->orWhereIn('user_id', Auth::user()->friends()->pluck('id'));
+            //     }
+            // )->orderBy('created_at', 'desc')->get();
+
+            // $response['data']=$statuses;
+            // return response()->json($response);
         }
 
         return redirect()->view('home');
