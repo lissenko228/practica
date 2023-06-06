@@ -17,11 +17,25 @@ class ProfileController extends Controller
         
         $books=$user->books()->get();
 
-        $reader = DB::table('readers')->where('user_id', Auth::user()->id)->where('reader_id', $user->id)->first();
+        $reader = DB::table('readers')->where('user_id', Auth::user()->id)->where('reader_id', $userId)->first();
 
-        if($reader==null)
+        if($reader===null)
         {
             $reader='';
+        }
+
+        $read_book=DB::table('readers')->where('user_id', $userId)->where('reader_id', Auth::user()->id)->first();
+
+        if($read_book===null)
+        {
+            $read_book='';
+        }
+
+        $link=DB::table('links')->where('user_id', Auth::user()->id)->first();
+
+        if($link===null)
+        {
+            $link='';
         }
 
         if(!$user) abort(404);
@@ -29,7 +43,9 @@ class ProfileController extends Controller
         return view('users.profile', [
             'user' => $user,
             'books' => $books,
-            'reader' => $reader
+            'reader' => $reader,
+            'read_book' => $read_book,
+            'link' => $link
         ]);
     }
 }

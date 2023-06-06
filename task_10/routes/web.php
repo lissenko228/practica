@@ -44,5 +44,15 @@ Route::post('/edit/{bookId}', 'BookController@postEdit')->middleware('auth');
 
 Route::get('/delete/{bookId}', 'BookController@delete')->middleware('auth')->name('delete');
 
+// читатели
+
 Route::get('reader/{userId}', 'ReaderController@addReader')->middleware('auth')->name('reader');
 Route::get('reader/del/{userId}', 'ReaderController@delReader')->middleware('auth')->name('reader.del');
+
+// поделиться ссылкой
+
+Route::get('link', 'LinkController@getLink')->middleware('auth')->name('link');
+
+Route::get('links/{userId}', 'LinkController@viewLink');
+
+Route::get('links/book/{bookId}', 'BookController@readLink')->name('links.book');

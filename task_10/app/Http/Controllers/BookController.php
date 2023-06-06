@@ -33,17 +33,28 @@ class BookController extends Controller
     {
         $book=Book::find($bookId);
 
-        if(Auth::user()->id!==$book->user->id) // проверка пользователя
+        if(Auth::user()->id===$book->user->id) // проверка пользователя
         {
-            return redirect()->route('index');
+            $book=Book::where('id', $bookId)->first();
+
+            return view('library.book', [
+                'book' => $book
+            ]);
         }
 
+        $read=DB::table('readers')->where('user_id', $book->user->id)->where('reader_id', Auth::user()->id)->first();
 
-        $book=Book::where('id', $bookId)->first();
+        if(Auth::user()->id===$read->reader_id && $read->accepted===1)
+        {
+            $book=Book::where('id', $bookId)->first();
 
-        return view('library.book', [
-            'book' => $book
-        ]);
+            return view('library.book', [
+                'book' => $book
+            ]);
+        }
+
+        return redirect()->route('index');
+        
     }
 
     // изменить книгу страница
@@ -101,4 +112,24 @@ class BookController extends Controller
         return redirect()->route('profile', ['userId' => Auth::user()->id])->with('info', 'Книга успешно удалена');
     }
 
+    // чтение книги по ссылке 
+    public function readLink($bookId)
+    {
+        $book=Book::find($bookId);
+
+        if(!$book) return redirect()->route('index');
+
+        $link=DB::table('links')->where('user_id', $book->user->id)->first();
+
+        if(!$link) return redirect()->back();
+
+        if($book->user->id===$link->user_id)
+        {
+            return view('library.book', [
+                'book' => $book
+            ]);
+        }
+
+       return redirect()->back();
+    }
 }

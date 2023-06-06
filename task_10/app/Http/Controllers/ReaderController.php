@@ -18,7 +18,12 @@ class ReaderController extends Controller
             return redirect()->route('index'); //проверка пользователя
         }
 
-        $reader=DB::table('readers')->where('reader_id', $userId);
+        $reader=DB::table('readers')->where('reader_id', $userId)->first();
+
+        if($reader==null)
+        {
+            $reader='';
+        }
 
         if($reader)
         {
