@@ -17,6 +17,7 @@ class CreateReadersTable extends Migration
             $table->id();
             $table->integer('user_id');
             $table->integer('reader_id');
+            $table->integer('accepted')->default(1);
             $table->timestamps();
         });
     }

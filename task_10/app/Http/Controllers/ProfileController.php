@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use App\Models\Book;
 use App\Models\User;
+use App\Models\Reader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,11 +17,19 @@ class ProfileController extends Controller
         
         $books=$user->books()->get();
 
+        $reader = DB::table('readers')->where('user_id', Auth::user()->id)->where('reader_id', $user->id)->first();
+
+        if($reader==null)
+        {
+            $reader='';
+        }
+
         if(!$user) abort(404);
 
         return view('users.profile', [
             'user' => $user,
-            'books' => $books
+            'books' => $books,
+            'reader' => $reader
         ]);
     }
 }

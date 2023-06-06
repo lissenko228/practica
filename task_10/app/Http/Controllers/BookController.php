@@ -6,6 +6,7 @@ use Auth;
 use App\Models\Book;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BookController extends Controller
 {
@@ -36,6 +37,7 @@ class BookController extends Controller
         {
             return redirect()->route('index');
         }
+
 
         $book=Book::where('id', $bookId)->first();
 

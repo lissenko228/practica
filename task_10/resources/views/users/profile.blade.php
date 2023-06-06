@@ -4,6 +4,7 @@
 @section('container')
 <div class="row">
     <h2>Библиотека {{$user->surname." ".$user->name." ".$user->lastname}}</h2>
+    {{$reader}}
     <div class="row gap-3 mt-3">
         @if (Auth::user()->id===$user->id)
         <h4>Добавить книгу</h4>
@@ -30,12 +31,12 @@
             <button type="submit" class="btn btn-dark">Добавить</button>
         </form>
         @else
+            {{-- @if ($reader->accepted===1) --}}
+                <a href="{{route('reader.del', ['userId' => $user->id])}}" type="button" class="btn btn-danger">Удалить доступ из библиотеки</a>
+            {{-- @else --}}
+                <a href="{{route('reader', ['userId' => $user->id])}}" type="button" class="btn btn-success">Дать доступ к своей библиотеке</a>
+            {{-- @endif --}}
 
-        {{-- @if ()
-            
-        @endif --}}
-
-        <a href="{{route('reader', ['userId' => $user->id])}}" type="button" class="btn btn-success">Дать доступ к своей библиотеке</a>
         @endif
         <h4>Книги {{$user->surname." ".$user->name." ".$user->lastname}}</h4>
         @foreach ($books as $book)

@@ -45,3 +45,4 @@ Route::post('/edit/{bookId}', 'BookController@postEdit')->middleware('auth');
 Route::get('/delete/{bookId}', 'BookController@delete')->middleware('auth')->name('delete');
 
 Route::get('reader/{userId}', 'ReaderController@addReader')->middleware('auth')->name('reader');
+Route::get('reader/del/{userId}', 'ReaderController@delReader')->middleware('auth')->name('reader.del');

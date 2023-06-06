@@ -63,14 +63,9 @@ class User extends Authenticatable
     }
 
     // получить читателей
-    public function readerOfMine()
+    public function readers()
     {
-        return $this->belongsToMany('App\Models\User', 'readers', 'user_id', 'reader_id');
-    }
-
-    public function readerOf()
-    {
-        return $this->belongsToMany('App\Models\User', 'readers', 'reader_id', 'user_id');
+        return $this->hasMany('App\Models\Reader', 'user_id');
     }
 
 }
