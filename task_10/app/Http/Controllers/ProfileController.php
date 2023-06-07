@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use App\Models\Book;
 use App\Models\User;
+use App\Models\Link;
 use App\Models\Reader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,21 +18,21 @@ class ProfileController extends Controller
         
         $books=$user->books()->get();
 
-        $reader = DB::table('readers')->where('user_id', Auth::user()->id)->where('reader_id', $userId)->first();
+        $reader=Reader::where('user_id', Auth::user()->id)->where('reader_id', $userId)->first();
 
         if($reader===null)
         {
             $reader='';
         }
 
-        $read_book=DB::table('readers')->where('user_id', $userId)->where('reader_id', Auth::user()->id)->first();
+        $read_book=Reader::where('user_id', $userId)->where('reader_id', Auth::user()->id)->first();
 
         if($read_book===null)
         {
             $read_book='';
         }
 
-        $link=DB::table('links')->where('user_id', Auth::user()->id)->first();
+        $link=Link::where('user_id', Auth::user()->id)->first();
 
         if($link===null)
         {

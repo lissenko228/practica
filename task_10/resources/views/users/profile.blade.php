@@ -29,10 +29,11 @@
             </div>
             <button type="submit" class="btn btn-dark">Добавить</button>
         </form>
-        <div>
-            <a href="{{route('link')}}" class="btn btn-primary">Поделиться библиотекой</a>
+        <div>  
             @if ($link)
                 Ссылка на библиотеку: http://library/links/{{$link->user_id}}
+            @else
+                <a href="{{route('link')}}" class="btn btn-primary">Поделиться библиотекой</a>
             @endif
         </div>
         @else

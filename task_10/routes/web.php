@@ -55,4 +55,4 @@ Route::get('link', 'LinkController@getLink')->middleware('auth')->name('link');
 
 Route::get('links/{userId}', 'LinkController@viewLink');
 
-Route::get('links/book/{bookId}', 'BookController@readLink')->name('links.book');
+Route::get('links/book/{bookId}', 'BookController@readLink')->middleware('link')->name('links.book');

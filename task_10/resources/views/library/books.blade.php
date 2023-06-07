@@ -16,7 +16,11 @@
       @endif
 
       @if ($link)
-        <a href="{{route('links.book', ['bookId' => $book->id])}}" class="btn btn-info btn-sm">Прочитать</a>
+        @if (Auth::user())  
+        
+        @else
+          <a href="{{route('links.book', ['bookId' => $book->id])}}" class="btn btn-info btn-sm">Прочитать</a>
+        @endif
       @endif
     </div>
   </div>
