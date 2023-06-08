@@ -14,7 +14,7 @@ class BookController extends Controller
     // добавить книгу
     public function add(Request $request, $userId)
     {
-        $this->validate($request, [
+        $this -> validate($request, [
             'title' => 'required|max:50',
             'text' => 'required|'
         ]);
@@ -25,35 +25,35 @@ class BookController extends Controller
             'text' => $request->input('text'),
         ]);
 
-        return redirect()->back()->with('info', 'Книга добавлена');
+        return redirect() -> back() -> with('info', 'Книга добавлена');
     }
 
     // читать книгу
     public function read($bookId)
     {
-        $book=Book::find($bookId);
+        $book = Book::find($bookId);
 
-        if(Auth::user()->id===$book->user->id) // проверка пользователя
+        if(Auth::user() -> id === $book -> user -> id) // проверка пользователя
         {
-            $book=Book::where('id', $bookId)->first();
+            $book = Book::where('id', $bookId) -> first();
 
             return view('library.book', [
                 'book' => $book
             ]);
         }
 
-        $read=DB::table('readers')->where('user_id', $book->user->id)->where('reader_id', Auth::user()->id)->first();
+        $read = DB::table('readers') -> where('user_id', $book -> user -> id)->where('reader_id', Auth::user() -> id) -> first();
 
-        if(Auth::user()->id===$read->reader_id && $read->accepted===1)
+        if(Auth::user() -> id === $read -> reader_id && $read -> accepted === 1)
         {
-            $book=Book::where('id', $bookId)->first();
+            $book = Book::where('id', $bookId) -> first();
 
             return view('library.book', [
                 'book' => $book
             ]);
         }
 
-        return redirect()->route('index');
+        return redirect() -> route('index');
         
     }
 
@@ -62,12 +62,12 @@ class BookController extends Controller
     {
         $book=Book::find($bookId);
 
-        if(Auth::user()->id!==$book->user->id) // проверка пользователя
+        if(Auth::user() -> id !== $book -> user -> id) // проверка пользователя
         {
-            return redirect()->route('index');
+            return redirect() -> route('index');
         }
 
-        $book=Book::where('id', $bookId)->first();
+        $book = Book::where('id', $bookId) -> first();
 
         return view('library.edit', [
             'book' => $book
@@ -77,59 +77,57 @@ class BookController extends Controller
     // изменить книгу
     public function postEdit(Request $request,$bookId)
     {
-        $book=Book::find($bookId);
+        $book = Book::find($bookId);
 
-        if(Auth::user()->id!==$book->user->id)
+        if(Auth::user() -> id !== $book -> user -> id)
         {
-            return redirect()->route('index');
+            return redirect() -> route('index');
         }
 
-        $this->validate($request,
+        $this -> validate($request,
         [
             'title' => 'max:50',
         ]);
 
         Book::where('id', $bookId)
-              ->update(['title' => $request->input('title'),
-                        'text' => $request->input('text')
+              -> update(['title' => $request -> input('title'),
+                        'text' => $request -> input('text')
             ]);
         
-        return redirect()->route('edit', ['bookId' => $bookId])->with('info', 'Данные книги изменены');
+        return redirect() -> route('edit', ['bookId' => $bookId]) -> with('info', 'Данные книги изменены');
     }
 
     // удалить книгу
     public function delete($bookId)
     {
-        $book=Book::find($bookId);
+        $book = Book::find($bookId);
 
-        if(Auth::user()->id!==$book->user->id)
+        if(Auth::user() -> id !== $book -> user -> id)
         {
-            return redirect()->route('index');
+            return redirect() -> route('index');
         }
 
-        Book::where('id', $bookId)->delete();
+        Book::where('id', $bookId) -> delete();
 
-        return redirect()->route('profile', ['userId' => Auth::user()->id])->with('info', 'Книга успешно удалена');
+        return redirect() -> route('profile', ['userId' => Auth::user() -> id])->with('info', 'Книга успешно удалена');
     }
 
     // чтение книги по ссылке 
     public function readLink($bookId)
     {
-        $book=Book::find($bookId);
+        $book = Book::find($bookId);
 
-        if(!$book) return redirect()->route('index');
+        $link = DB::table('links') -> where('user_id', $book -> user -> id) -> first();
 
-        $link=DB::table('links')->where('user_id', $book->user->id)->first();
+        if( ! $link) return redirect() -> back();
 
-        if(!$link) return redirect()->back();
-
-        if($book->user->id===$link->user_id)
+        if($book -> user -> id === $link -> user_id)
         {
             return view('library.book', [
-                'book' => $book
+                'book' => $book,
             ]);
         }
 
-       return redirect()->back();
+       return redirect() -> back();
     }
 }
