@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use App\Models\Book;
 use App\Models\User;
+use App\Models\Link;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -115,19 +116,17 @@ class BookController extends Controller
     // чтение книги по ссылке 
     public function readLink($bookId)
     {
-        $book = Book::find($bookId);
+        $link = Link::where('book_id', $bookId) -> first();
 
-        $link = DB::table('links') -> where('user_id', $book -> user -> id) -> first();
-
-        if( ! $link) return redirect() -> back();
-
-        if($book -> user -> id === $link -> user_id)
+        if($bookId == $link -> book_id)
         {
+            $book = Book::find($bookId);
+
             return view('library.book', [
                 'book' => $book,
             ]);
         }
 
-       return redirect() -> back();
+       return redirect() -> route('index');
     }
 }

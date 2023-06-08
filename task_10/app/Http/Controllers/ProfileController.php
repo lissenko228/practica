@@ -10,8 +10,16 @@ use App\Models\Reader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Summary of ProfileController
+ */
 class ProfileController extends Controller
 {
+    /**
+     * Summary of profile
+     * @param mixed $userId
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function profile($userId)
     {
         $user=User::where('id', $userId)->first();
@@ -32,13 +40,6 @@ class ProfileController extends Controller
             $read_book='';
         }
 
-        $link=Link::where('user_id', Auth::user()->id)->first();
-
-        if($link===null)
-        {
-            $link='';
-        }
-
         if(!$user) abort(404);
 
         return view('users.profile', [
@@ -46,7 +47,6 @@ class ProfileController extends Controller
             'books' => $books,
             'reader' => $reader,
             'read_book' => $read_book,
-            'link' => $link
         ]);
     }
 }
