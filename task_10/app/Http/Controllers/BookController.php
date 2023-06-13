@@ -22,8 +22,8 @@ class BookController extends Controller
 
         Book::create([
             'user_id' => $userId,
-            'title' => $request->input('title'),
-            'text' => $request->input('text'),
+            'title' => $request -> input('title'),
+            'text' => $request -> input('text'),
         ]);
 
         return redirect() -> back() -> with('info', 'Книга добавлена');
@@ -34,27 +34,9 @@ class BookController extends Controller
     {
         $book = Book::find($bookId);
 
-        if(Auth::user() -> id === $book -> user -> id) // проверка пользователя
-        {
-            $book = Book::where('id', $bookId) -> first();
-
-            return view('library.book', [
-                'book' => $book
-            ]);
-        }
-
-        $read = DB::table('readers') -> where('user_id', $book -> user -> id)->where('reader_id', Auth::user() -> id) -> first();
-
-        if(Auth::user() -> id === $read -> reader_id && $read -> accepted === 1)
-        {
-            $book = Book::where('id', $bookId) -> first();
-
-            return view('library.book', [
-                'book' => $book
-            ]);
-        }
-
-        return redirect() -> route('index');
+        return view('library.book', [
+            'book' => $book
+        ]);
         
     }
 
@@ -68,15 +50,13 @@ class BookController extends Controller
             return redirect() -> route('index');
         }
 
-        $book = Book::where('id', $bookId) -> first();
-
         return view('library.edit', [
             'book' => $book
         ]);
     }
 
     // изменить книгу
-    public function postEdit(Request $request,$bookId)
+    public function postEdit(Request $request, $bookId)
     {
         $book = Book::find($bookId);
 
@@ -90,10 +70,11 @@ class BookController extends Controller
             'title' => 'max:50',
         ]);
 
-        Book::where('id', $bookId)
-              -> update(['title' => $request -> input('title'),
-                        'text' => $request -> input('text')
-            ]);
+        $book -> update(
+                        [
+                            'title' => $request -> input('title'),
+                            'text' => $request -> input('text')
+                        ]);
         
         return redirect() -> route('edit', ['bookId' => $bookId]) -> with('info', 'Данные книги изменены');
     }
@@ -108,7 +89,7 @@ class BookController extends Controller
             return redirect() -> route('index');
         }
 
-        Book::where('id', $bookId) -> delete();
+        $book -> delete();
 
         return redirect() -> route('profile', ['userId' => Auth::user() -> id])->with('info', 'Книга успешно удалена');
     }

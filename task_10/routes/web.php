@@ -13,44 +13,48 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/','HomeController@index')->name('index');
+Route::middleware('guest')->group(function()
+{
+    
+    // авторизация
+    Route::get('/signup', 'AuthController@getSignup')->name('auth.signup');
+    Route::post('/signup', 'AuthController@postSignup');
 
-// авторизация
+    Route::get('/signin', 'AuthController@getSignin')->name('auth.signin');
+    Route::post('/signin', 'AuthController@postSignin');
 
-Route::get('/signup', 'AuthController@getSignup')->middleware('guest')->name('auth.signup');
-Route::post('/signup', 'AuthController@postSignup')->middleware('guest');
+});
 
-Route::get('/signin', 'AuthController@getSignin')->middleware('guest')->name('auth.signin');
-Route::post('/signin', 'AuthController@postSignin')->middleware('guest');
+Route::middleware('auth')->group(function()
+{
 
-Route::get('/logout', 'AuthController@logout')->name('auth.logout');
+    // пользователи
+    Route::get('/users', 'UserController@users')->name('users.index');
 
-// пользователи
+    // профиль
+    Route::get('/profile/{userId}', 'ProfileController@profile')->name('profile');
 
-Route::get('/users', 'UserController@users')->middleware('auth')->name('users.index');
+    // книги
+    // Route::get('/book/{bookId}', 'BookController@read')->middleware('book')->name('book');
 
-// профиль
+    Route::post('/add/{userId}', 'BookController@add')->name('add');
 
-Route::get('/profile/{userId}', 'ProfileController@profile')->middleware('auth')->name('profile');
+    Route::get('/edit/{bookId}', 'BookController@edit')->name('edit');
+    Route::post('/edit/{bookId}', 'BookController@postEdit');
 
-// книги
+    Route::get('/delete/{bookId}', 'BookController@delete')->name('delete');
 
-Route::get('/book/{bookId}', 'BookController@read')->middleware('auth')->name('book');
+    // читатели
+    Route::get('reader/{userId}', 'ReaderController@addReader')->name('reader');
+    Route::get('reader/del/{userId}', 'ReaderController@delReader')->name('reader.del');
 
-Route::post('/add/{userId}', 'BookController@add')->middleware('auth')->name('add');
+    // поделиться ссылкой
+    Route::get('linkbook/{bookId}', 'LinkController@getLink')->name('linkbook');
 
-Route::get('/edit/{bookId}', 'BookController@edit')->middleware('auth')->name('edit');
-Route::post('/edit/{bookId}', 'BookController@postEdit')->middleware('auth');
+});
 
-Route::get('/delete/{bookId}', 'BookController@delete')->middleware('auth')->name('delete');
+Route::get('/','HomeController@index')->name('index'); //главная
 
-// читатели
+Route::get('/logout', 'AuthController@logout')->name('auth.logout'); // выход
 
-Route::get('reader/{userId}', 'ReaderController@addReader')->middleware('auth')->name('reader');
-Route::get('reader/del/{userId}', 'ReaderController@delReader')->middleware('auth')->name('reader.del');
-
-// поделиться ссылкой
-
-Route::get('linkbook/{bookId}', 'LinkController@getLink')->middleware('auth')->name('linkbook');
-
-Route::get('linkbook-read/{bookId}', 'BookController@readLink')->middleware('link')->name('read.link');
+Route::get('book/{bookId}', 'BookController@read')->middleware('book')->name('book'); //доступ по ссылке

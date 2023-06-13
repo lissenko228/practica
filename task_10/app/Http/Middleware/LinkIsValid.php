@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Middleware;
+
 use App\Models\Book;
 use App\Models\Link;
+use Illuminate\Support\Facades\DB;
+use Auth;
 
 use Closure;
 
@@ -24,7 +27,27 @@ class LinkIsValid
 
         $book = Book::where('id', $bookId) -> first();
 
-        if($book)
+        if(Auth::user())
+        {
+            if(Auth::user() -> id === $book -> user -> id) // проверка пользователя
+            {
+                return $next($request);
+            }
+
+            $read = DB::table('readers') -> where('user_id', $book -> user -> id)->where('reader_id', Auth::user() -> id) -> first();
+    
+            if($read !== null)
+            {
+                if(Auth::user() -> id === $read -> reader_id && $read -> accepted === 1) //проверка по доступу к библиотеке
+                {
+                    $book = Book::where('id', $bookId) -> first();
+        
+                    return $next($request);
+                }
+            }
+        }
+
+        if($book) // проверка по доступу по ссылке
         {
             $link = Link::where('book_id', $bookId) -> first();
 

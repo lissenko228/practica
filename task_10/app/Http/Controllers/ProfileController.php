@@ -22,25 +22,25 @@ class ProfileController extends Controller
      */
     public function profile($userId)
     {
-        $user=User::where('id', $userId)->first();
+        $user = User::where('id', $userId) -> first();
         
-        $books=$user->books()->get();
+        $books = $user -> books() -> get();
 
-        $reader=Reader::where('user_id', Auth::user()->id)->where('reader_id', $userId)->first();
+        $reader = Reader::where('user_id', Auth::user() -> id) -> where('reader_id', $userId) -> first();
 
-        if($reader===null)
+        if($reader === null)
         {
-            $reader='';
+            $reader = '';
         }
 
-        $read_book=Reader::where('user_id', $userId)->where('reader_id', Auth::user()->id)->first();
+        $read_book = Reader::where('user_id', $userId) -> where('reader_id', Auth::user() -> id) -> first();
 
-        if($read_book===null)
+        if($read_book === null)
         {
-            $read_book='';
+            $read_book = '';
         }
 
-        if(!$user) abort(404);
+        if( ! $user) abort(404);
 
         return view('users.profile', [
             'user' => $user,
