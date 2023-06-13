@@ -147,30 +147,32 @@ h2
 
 .del
 {
-    color: #dc4f4f;
-    padding: 10px;
-    border: 1px solid #dc4f4f;
-    border-radius: 10px;
+    color: #dc4f4f !important;
+    padding: 10px !important;
+    border: 1px solid #dc4f4f !important;
+    border-radius: 10px !important;
+    transition: 0.5s;
 }
 
 .del:hover
 {
-    color: #fff;
-    background-color: #dc4f4f;
+    color: #fff !important;
+    background-color: #dc4f4f !important;
+    cursor: pointer;
 }
 
 .ready
 {
-    color: #54dc4f;
-    padding: 10px;
-    border: 1px solid #54dc4f;
-    border-radius: 10px;
+    color: #54dc4f !important;
+    padding: 10px !important;
+    border: 1px solid #54dc4f !important;
+    border-radius: 10px !important;
 }
 
 .ready:hover
 {
-    color: #fff;
-    background-color: #54dc4f;
+    color: #fff !important;
+    background-color: #54dc4f !important;
 }
 
 .task

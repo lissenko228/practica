@@ -2,61 +2,47 @@
 
 class Controller_Auth extends Controller
 {
-
-    function __construct()
-    {
-        $this->model = new Model_Auth();
-        $this->view = new View();
-    }
     
     function action_index()
     {
-        $connect=mysqli_connect('localhost', 'root', '', 'tasklist');
-        $login=$_POST['login'];
-        $login=addslashes($login);
-        $login = $connect->real_escape_string($login);
+        $connect = mysqli_connect('localhost', 'root', '', 'tasklist');
+        $login = $_POST['login'];
+        $login = addslashes($login);
+        $login  =  $connect->real_escape_string($login);
         
-        $pass=$_POST['pass'];
-        $auth=$_POST['auth'];
+        $pass = $_POST['pass'];
+        $auth = $_POST['auth'];
 
-        if($pass && $login)
-        {
-            $str_auth="SELECT * FROM `users` where `login` = '$login' AND `password` = '$pass'";
-            $run_auth=mysqli_query($connect,$str_auth);
-            $count=mysqli_num_rows($run_auth);
-            $auth=mysqli_fetch_array($run_auth);
+        if ($pass && $login) {
+            $str_auth = "SELECT * FROM `users` where `login` = '$login' AND `password` = '$pass'";
+            $run_auth = mysqli_query($connect,$str_auth);
+            $count = mysqli_num_rows($run_auth);
+            $auth = mysqli_fetch_array($run_auth);
     
-            if($count==1)
-            {
-                $_SESSION['user']=array(
-                    'id' => $auth['id'],
-                    'login' => $auth['login'],
+            if ($count == 1) {
+                $_SESSION['user'] = array(
+                    'id'  => $auth['id'],
+                    'login'  => $auth['login'],
                 );
-            }
-            else
-            {
-                $str_add="INSERT INTO `users` (`login`, `password`, `created_at`) VALUES ('$login', '$pass', CURRENT_TIMESTAMP)";
-                $run_add=mysqli_query($connect,$str_add);
+            } else {
+                $str_add = "INSERT INTO `users` (`login`, `password`, `created_at`) VALUES ('$login', '$pass', CURRENT_TIMESTAMP)";
+                $run_add = mysqli_query($connect,$str_add);
     
-                if($run_add)
-                {
-                    $str_auth="SELECT * FROM `users` where `login` = '$login' AND `password` = '$pass'";
-                    $run_auth=mysqli_query($connect,$str_auth);
-                    $auth=mysqli_fetch_array($run_auth);
+                if ($run_add) {
+                    $str_auth = "SELECT * FROM `users` where `login` = '$login' AND `password` = '$pass'";
+                    $run_auth = mysqli_query($connect,$str_auth);
+                    $auth = mysqli_fetch_array($run_auth);
     
-                    $_SESSION['user']=array(
-                        'id' => $auth['id'],
-                        'login' => $auth['login'],
+                    $_SESSION['user'] = array(
+                        'id'  => $auth['id'],
+                        'login'  => $auth['login'],
                     );
                 }
             }
+        } else {
+            $_SESSION['error'] = "Заполните все поля";
         }
-        else
-        {
-            $_SESSION['error']="Заполните все поля";
-        }
-        
-        // $data = $this->model->get_data();		
+	
         $this->view->generate('auth_view.php', 'template_view.php');
     }
 

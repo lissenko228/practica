@@ -14,9 +14,8 @@ class Route
 		$controller_name = 'Auth';
 		$action_name = 'index';
 		
-		$routes = parse_url($_SERVER['REQUEST_URI']);
-		print_r($routes['query']);
-		$routes=explode('/', $routes['path']);
+		$routes = explode('/', $_SERVER['REQUEST_URI']);
+
 		// получаем имя контроллера
 		if ( !empty($routes[1]) )
 		{	

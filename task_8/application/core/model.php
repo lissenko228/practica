@@ -2,7 +2,7 @@
 
 class Model
 {
-	
+	public $dbh;
 	/*
 		Модель обычно включает методы выборки данных, это могут быть:
 			> методы нативных библиотек pgsql или mysql;
@@ -14,7 +14,11 @@ class Model
 
 	// метод выборки данных
 	public function get_data()
-	{
-		// todo
+	{	
+		try {
+			$this -> dbh = new PDO('mysql:dbname=tasklist; host=localhost', 'root', '');
+		} catch (PDOException $e) {
+			die($e->getMessage());
+		}
 	}
 }

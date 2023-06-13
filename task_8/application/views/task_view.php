@@ -3,22 +3,21 @@
             <div>Добро пожаловать, <?=$_SESSION['user']['login']?>!</div>
             <div>
             <?php
-                if(!$_SESSION['user'])
-                {
+                if ( ! $_SESSION['user']) {
                     header("Location:/auth");
                     exit();
-                }
-                elseif($_POST)
-                {
+                } elseif ($_POST) {
                     header("Location:/task");
                     exit();
                 }
+
                 $id_user=$_SESSION['user']['id'];
-                if($_SESSION['alert'])
-                {
+
+                if ($_SESSION['alert']) {
                     echo "<span id=mess>".$_SESSION['alert']."</span>";
                 }
-                unset($_SESSION['alert'])
+                unset($_SESSION['alert']);
+
             ?>
             <a href="/exit">Выход</a></div>
         </header>
@@ -31,37 +30,45 @@
                     <input type="submit" value="Добавить" name="add_task">
                 </form>
                 <div class="actions">
-                    <a href="/task/delAll/?id_user=<?=$id_user?>" class="del">Удалить все</a>
-                    <a href="/task/changeAll/?id_user=<?=$id_user?>" class="ready">Выполнить все</a>
+                    <form action="/task/delAll" method="post">
+                        <input type="submit" class="del" value="Удалить все" name="add_task">
+                    </form>
+                    <form action="/task/changeAll" method="post">
+                        <input type="submit" class="ready" value="Выполнить все" name="add_task">
+                    </form>
                 </div>
                 <?php
-                    $str_out_t="SELECT * FROM `tasks` where `id_user` = '$id_user'";
-                    $run_out_t=mysqli_query($connect,$str_out_t);
-
-                    while($out_t=mysqli_fetch_array($run_out_t))
-                    {
-                        echo "<div class=task>
-                        <div>
-                            <p>$out_t[description]</p>
-                            <div class=act>
-                                <a href='/task/delTask/?id_task=$out_t[id]' class=del>Удалить</a>";
-                                $color="green";
-                                if($out_t['status']==1)
-                                {
-                                    echo "<a href='/task/status/?id_task=$out_t[id]&status=$out_t[status]' class=ready>Выполнить</a>";
-                                    $color="red";
-                                }
-                                elseif($out_t['status']==2)
-                                {
-                                    echo "<a href='/task/status/?id_task=$out_t[id]&status=$out_t[status]' class=del>Отменить</a>";
-                                }
-                            echo "
+                    foreach ($data as $row) {
+                        echo "
+                        <div class=task>
+                            <div>
+                                <p>$row[description]</p>
+                                <div class=act>
+                                    <form action=/task/delTask/?id_task=$row[id] method=post>
+                                        <input type=submit value=Удалить class=del name=deltask>
+                                    </form>
+                                ";
+                                    $color="green";
+                                    if ($row['status']==1) {
+                                        echo "
+                                        <form action='/task/status/?id_task=$row[id]&status=$row[status]' method=post>
+                                            <input type=submit value=Выполнить class=ready name=deltask>
+                                        </form>
+                                        ";
+                                        $color="red";
+                                    } elseif ($row['status']==2) {
+                                        echo "
+                                        <form action='/task/status/?id_task=$row[id]&status=$row[status]' method=post>
+                                            <input type=submit value=Отменить class=del name=deltask>
+                                        </form>
+                                        ";
+                                    }
+                                echo "
+                                </div>
                             </div>
-                        </div>
-                        <div class='status $color'></div>
-                    </div>";
+                            <div class='status $color'></div>
+                        </div>";
                     }
-
                 ?>
             </div>
         </div>
