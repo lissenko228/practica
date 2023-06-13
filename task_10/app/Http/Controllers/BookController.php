@@ -4,10 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use App\Models\Book;
-use App\Models\User;
-use App\Models\Link;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class BookController extends Controller
 {
@@ -45,8 +42,8 @@ class BookController extends Controller
     {
         $book=Book::find($bookId);
 
-        if(Auth::user() -> id !== $book -> user -> id) // проверка пользователя
-        {
+        // проверка пользователя
+        if (Auth::user() -> id !== $book -> user -> id) {
             return redirect() -> route('index');
         }
 
@@ -60,8 +57,7 @@ class BookController extends Controller
     {
         $book = Book::find($bookId);
 
-        if(Auth::user() -> id !== $book -> user -> id)
-        {
+        if (Auth::user() -> id !== $book -> user -> id) {
             return redirect() -> route('index');
         }
 
@@ -71,10 +67,10 @@ class BookController extends Controller
         ]);
 
         $book -> update(
-                        [
-                            'title' => $request -> input('title'),
-                            'text' => $request -> input('text')
-                        ]);
+                [
+                    'title' => $request -> input('title'),
+                    'text' => $request -> input('text')
+                ]);
         
         return redirect() -> route('edit', ['bookId' => $bookId]) -> with('info', 'Данные книги изменены');
     }
@@ -84,30 +80,12 @@ class BookController extends Controller
     {
         $book = Book::find($bookId);
 
-        if(Auth::user() -> id !== $book -> user -> id)
-        {
+        if (Auth::user() -> id !== $book -> user -> id) {
             return redirect() -> route('index');
         }
 
         $book -> delete();
 
         return redirect() -> route('profile', ['userId' => Auth::user() -> id])->with('info', 'Книга успешно удалена');
-    }
-
-    // чтение книги по ссылке 
-    public function readLink($bookId)
-    {
-        $link = Link::where('book_id', $bookId) -> first();
-
-        if($bookId == $link -> book_id)
-        {
-            $book = Book::find($bookId);
-
-            return view('library.book', [
-                'book' => $book,
-            ]);
-        }
-
-       return redirect() -> route('index');
     }
 }

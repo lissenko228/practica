@@ -27,28 +27,25 @@ class LinkIsValid
 
         $book = Book::where('id', $bookId) -> first();
 
-        if(Auth::user())
-        {
-            if(Auth::user() -> id === $book -> user -> id) // проверка пользователя
-            {
+        if (Auth::user()) {
+            
+            // проверка пользователя
+            if (Auth::user() -> id === $book -> user -> id) { 
                 return $next($request);
             }
 
-            $read = DB::table('readers') -> where('user_id', $book -> user -> id)->where('reader_id', Auth::user() -> id) -> first();
+            //проверка по доступу к библиотеке
+            if (DB::table('readers') -> 
+            where([['user_id', $book -> user -> id], ['reader_id', Auth::user() -> id], ['accepted', 1]]) -> 
+            first()) {
+                $book = Book::where('id', $bookId) -> first();
     
-            if($read !== null)
-            {
-                if(Auth::user() -> id === $read -> reader_id && $read -> accepted === 1) //проверка по доступу к библиотеке
-                {
-                    $book = Book::where('id', $bookId) -> first();
-        
-                    return $next($request);
-                }
+                return $next($request);
             }
         }
 
-        if($book) // проверка по доступу по ссылке
-        {
+        // проверка по доступу по ссылке
+        if ($book) {
             $link = Link::where('book_id', $bookId) -> first();
 
             if( ! $link) return redirect() -> route('index');

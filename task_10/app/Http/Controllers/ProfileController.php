@@ -28,15 +28,13 @@ class ProfileController extends Controller
 
         $reader = Reader::where('user_id', Auth::user() -> id) -> where('reader_id', $userId) -> first();
 
-        if($reader === null)
-        {
+        if($reader === null) {
             $reader = '';
         }
 
         $read_book = Reader::where('user_id', $userId) -> where('reader_id', Auth::user() -> id) -> first();
 
-        if($read_book === null)
-        {
+        if($read_book === null) {
             $read_book = '';
         }
 

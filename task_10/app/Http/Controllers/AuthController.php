@@ -15,7 +15,7 @@ class AuthController extends Controller
 
     public function postSignup(Request $request)
     {
-        $this->validate($request, [
+        $this -> validate($request, [
             'email' => 'required|unique:users|email|max:255',
             'surname' => 'required|alpha_dash|max:30',
             'name' => 'required|alpha_dash|max:30',
@@ -24,14 +24,14 @@ class AuthController extends Controller
         ]);
 
         User::create([
-            'email' => $request->input('email'),
-            'surname' => $request->input('surname'),
-            'name' => $request->input('name'),
-            'lastname' => $request->input('lastname'),
-            'password' => bcrypt($request->input('password')),
+            'email' => $request -> input('email'),
+            'surname' => $request -> input('surname'),
+            'name' => $request -> input('name'),
+            'lastname' => $request -> input('lastname'),
+            'password' => bcrypt($request -> input('password')),
         ]);
 
-        return redirect()->route('index')->with('info', 'Вы зарегистировались');
+        return redirect() -> route('index') -> with('info', 'Вы зарегистировались');
     }
 
     public function getSignin()
@@ -41,23 +41,22 @@ class AuthController extends Controller
 
     public function postSignin(Request $request)
     {
-        $this->validate($request, [
+        $this -> validate($request, [
             'email' => 'required|max:255',
             'password' => 'required|min:6',
         ]);
 
-        if(!Auth::attempt($request->only(['email', 'password'])))
-        {
-            return redirect()->back()->with('info', 'Неправильный логин или пароль.');
+        if ( ! Auth::attempt($request -> only(['email', 'password']))) {
+            return redirect() -> back() -> with('info', 'Неправильный логин или пароль');
         }
         
-        return redirect()->route('index')->with('info', 'Вы успешно авторизовались');
+        return redirect() -> route('index') -> with('info', 'Вы успешно авторизовались');
     }
 
     public function logout()
     {
         Auth::logout();
 
-        return redirect()->route('index');
+        return redirect() -> route('index');
     }
 }
