@@ -48,21 +48,26 @@ class Route
 			include "application/models/".$model_file;
 		}
 
-		// подцепляем файл с классом контроллера
-		$controller_file = strtolower($controller_name).'.php';
-		$controller_path = "application/controllers/".$controller_file;
-		if(file_exists($controller_path))
+		// автозагрузка
+		spl_autoload_register(function ($class_name) 
 		{
-			include "application/controllers/".$controller_file;
-		}
-		else
-		{
-			/*
-			правильно было бы кинуть здесь исключение,
-			но для упрощения сразу сделаем редирект на страницу 404
-			*/
-			Route::ErrorPage404();
-		}
+			$class_file = strtolower($class_name).'.php';
+			$class_path = '';
+
+			if (strpos($class_name, 'Model_') !== false) {
+			  $class_path = "application/models/";
+			} elseif (strpos($class_name, 'Controller_') !== false) {
+			  $class_path = "application/controllers/";
+			}
+
+			$full_class_path = $class_path.$class_file;
+
+			if (file_exists($full_class_path)) {
+			  include $full_class_path;
+			} else {
+				Route::ErrorPage404();
+			}
+		  });
 		
 		// создаем контроллер
 		$controller = new $controller_name;
