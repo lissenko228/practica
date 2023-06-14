@@ -9,7 +9,6 @@
 </head>
 <body>
     <?php 
-        include 'application/models/model_db.php';
         include 'application/views/'.$content_view;
     ?>
 </body>

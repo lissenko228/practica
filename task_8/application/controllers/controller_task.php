@@ -4,87 +4,76 @@ class Controller_Task extends Controller
 {
     function __construct()
     {
-        $this->model = new Model_Task();
-        $this->view = new View();
+        $this -> model = new Model_Task();
+        $this -> view = new View();
     }
 
     function action_index() 
     {
-        $data = $this->model->get_data();
-        $this->view->generate('task_view.php', 'template_view.php', $data);
+        $data = $this -> model -> get_tasks();
+        $this -> view -> generate('task_view.php', 'template_view.php', $data);
     }
 
     function action_addTask()
     {
-        // try {
-		// 	$dbh = new PDO('mysql:dbname=tasklist; host=localhost', 'root', '');
-		// } catch (PDOException $e) {
-		// 	die($e->getMessage());
-		// }
-
-        $sth = $dbh->prepare("INSERT INTO `category` SET `parent` = :parent, `name` = :name");
-        $sth->execute(array('parent' => 1, 'name' => 'Виноград'));
-
-        $connect = mysqli_connect('localhost', 'root', '', 'tasklist');
         $desc = $_POST['desc'];
         $desc = addslashes($desc);
-        $desc  =  $connect->real_escape_string($desc);
 
         $add_task = $_POST['add_task'];
         $id_user = $_SESSION['user']['id'];
 
         if ($add_task) {
             if ($desc) {
-                $str_add = "INSERT INTO `tasks` (`id_user`, `description`, `created_at`, `status`) VALUES ('$id_user', '$desc', CURRENT_TIMESTAMP, '1')";
-                $run_add = mysqli_query($connect,$str_add);
-
-                if ($run_add) {
+                $data = array(
+                    'id_user' => $id_user,
+                    'description' => $desc
+                );
+        
+                $result = $this -> model->add_task($data);
+    
+                if ($result) {
                     $_SESSION['alert'] = "Задача добавлена";
                 } else {
-                    $_SESSION['alert'] = "Ошибка добавления";
+                    $_SESSION['alert'] = "Задачу добавить не удалось";
                 }
-            } else {
-                $_SESSION['alert'] = "Заполните все поля";
             }
         }
-        $this->view->generate('task_view.php', 'template_view.php');
+
+        $this -> view -> generate('task_view.php', 'template_view.php');
     }
 
     function action_delTask()
     {
-        $connect = mysqli_connect('localhost', 'root', '', 'tasklist');
-        $id_task = (int) $_GET['id_task'];
-        $del = "DELETE FROM `tasks` WHERE `id`  =  '$id_task'";
-        $run_del = mysqli_query($connect,$del);
-        if($run_del)
-        {
-            $_SESSION['alert'] = "Задача удалена";
-        }
-        else
-        {
-            $_SESSION['alert'] = "Удалить не удалось";
+        $id = (int) $_GET['id_task'];
+        
+        if ($id) {
+            $result = $this -> model -> del_task($id);
+
+            if ($result) {
+                $_SESSION['alert'] = "Задача удалена";
+            } else {
+                $_SESSION['alert'] = "Задачу удалить не удалось";
+            }
         }
 
-        $this->view->generate('task_view.php', 'template_view.php');
+        $this -> view -> generate('task_view.php', 'template_view.php');
     }
 
     function action_delAll()
     {
-        $connect = mysqli_connect('localhost', 'root', '', 'tasklist');
+        $del = $_POST['del_all'];
         $id_user = $_SESSION['user']['id'];
 
-        if($id_user)
-        {
-            $del = "DELETE FROM `tasks` WHERE `id_user`  =  '$id_user'";
-            $run_del = mysqli_query($connect,$del);
-            if($run_del)
-            {
+        if ($del) {
+            $result = $this -> model -> del_all($id_user);
+
+            if ($result) {
                 $_SESSION['alert'] = "Задачи удалены";
+            } else {
+                $_SESSION['alert'] = "Задачи удалить не удалось";
             }
-            else
-            {
-                $_SESSION['alert'] = "Удалить не удалось";
-            }
+        } else {
+            $_SESSION['alert'] = "Задачи удалить не удалось";
         }
 
         $this->view->generate('task_view.php', 'template_view.php');
@@ -92,38 +81,49 @@ class Controller_Task extends Controller
 
     function action_status()
     {
-        $connect = mysqli_connect('localhost', 'root', '', 'tasklist');
-        $id_task = (int) $_GET['id_task'];
+        $ready = $_POST['ready'];
+        $unready = $_POST['unready'];
+        $id = (int) $_GET['id_task'];
         $status = (int) $_GET['status'];
+        
+        if ($ready || $unready) {
 
-        if($id_task)
-        {
-            if($status == 1)
-            {
-                $upd_stat = "UPDATE `tasks` SET `status` = '2' WHERE `id` = '$id_task'";
-                $upd = mysqli_query($connect,$upd_stat);
-                if($upd)
-                {
-                    $_SESSION['alert'] = "Задача выполнена";
+            if ($id) {
+
+                if ($status == 1) {
+
+                    $status = 2;
+
+                    $result = $this -> model -> status_task($status, $id);
+
+                    if ($result) {
+                        $_SESSION['alert'] = "Статус изменен";
+                    } else {
+                        $_SESSION['alert'] = "Ошибка смены статуса";
+                    }
+
+                } elseif ($status == 2) {
+                    
+                    $status = 1;
+
+                    $result = $this -> model -> status_task($status, $id);
+
+                    if ($result) {
+                        $_SESSION['alert'] = "Статус изменен";
+                    } else {
+                        $_SESSION['alert'] = "Ошибка смены статуса";
+                    }
+
+                } else {
+                    $_SESSION['alert'] = "Ошибка смены статуса";
                 }
-                else
-                {
-                    $_SESSION['alert'] = "Ошибка выполнения";
-                }
+
+            } else {
+                $_SESSION['alert'] = "Ошибка смены статуса";
             }
-            elseif($status == 2)
-            {
-                $upd_stat = "UPDATE `tasks` SET `status` = '1' WHERE `id` = '$id_task'";
-                $upd = mysqli_query($connect,$upd_stat);
-                if($upd)
-                {
-                    $_SESSION['alert'] = "Задача отменена";
-                }
-                else
-                {
-                    $_SESSION['alert'] = "Ошибка отмены";
-                }
-            }    
+
+        } else {
+            $_SESSION['alert'] = "Ошибка смены статуса";
         }
 
         $this->view->generate('task_view.php', 'template_view.php');
@@ -131,21 +131,19 @@ class Controller_Task extends Controller
 
     function action_changeAll()
     {
-        $connect = mysqli_connect('localhost', 'root', '', 'tasklist');
         $id_user = $_SESSION['user']['id'];
+        $ready_all = $_POST['ready_all'];
 
-        if($id_user)
-        {
-            $upd_stat = "UPDATE `tasks` SET `status` = '2' WHERE `id_user` = '$id_user'";
-            $upd = mysqli_query($connect,$upd_stat);
+        if ($ready_all) {
 
-            if($upd)
-            {
-                $_SESSION['alert'] = "Задача выполнена";
-            }
-            else
-            {
-                $_SESSION['alert'] = "Ошибка выполнения";
+            if ($id_user) {  
+                $result = $this -> model -> status_all($id_user);
+
+                if ($result) {
+                    $_SESSION['alert'] = "Статус изменен";
+                } else {
+                    $_SESSION['alert'] = "Ошибка смены статуса";
+                }
             }
         }
 
