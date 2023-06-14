@@ -1,10 +1,10 @@
 <?php
-require_once 'application/models/model_user.php';
+
 class Controller_Auth extends Controller
 {
     function __construct()
     {
-        $this -> model = new Model_User();
+        $this -> model = new Model_Auth();
         $this -> view = new View();
     }
     
