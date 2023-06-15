@@ -65,16 +65,17 @@ class Controller_Task extends Controller
         $del = $_POST['del_all'];
         $id_user = $_SESSION['user']['id'];
 
+        $alert = "Задачи удалить не удалось";
+
         if ($del) {
             $result = $this -> model -> del_all($id_user);
 
-            if ( ! $result) {
-                $_SESSION['alert'] = "Задачи удалить не удалось";
+            if ($result) {
+                $alert = "Задачи удалены";
             } 
-            $_SESSION['alert'] = "Задачи удалены";
-        } else {
-            $_SESSION['alert'] = "Задачи удалить не удалось";
         }
+
+        $_SESSION['alert'] = $alert;
 
         $this->view->generate('task_view.php', 'template_view.php');
     }
@@ -85,6 +86,7 @@ class Controller_Task extends Controller
         $unready = $_POST['unready'];
         $id = (int) $_GET['id_task'];
         $status = (int) $_GET['status'];
+        $alert = "Ошибка смены статуса";
         
         if ($ready || $unready) {
 
@@ -96,10 +98,9 @@ class Controller_Task extends Controller
 
                     $result = $this -> model -> status_task($status, $id);
 
-                    if ( ! $result) {
-                        $_SESSION['alert'] = "Ошибка смены статуса";
+                    if ($result) {
+                        $alert = "Статус изменен";
                     }
-                    $_SESSION['alert'] = "Статус изменен";
 
                 } elseif ($status == 2) {
                     
@@ -107,22 +108,14 @@ class Controller_Task extends Controller
 
                     $result = $this -> model -> status_task($status, $id);
 
-                    if ( ! $result) {
-                        $_SESSION['alert'] = "Ошибка смены статуса";
+                    if ($result) {
+                        $alert = "Статус изменен";
                     }
-                    $_SESSION['alert'] = "Статус изменен";
-
-                } else {
-                    $_SESSION['alert'] = "Ошибка смены статуса";
                 }
-
-            } else {
-                $_SESSION['alert'] = "Ошибка смены статуса";
             }
-
-        } else {
-            $_SESSION['alert'] = "Ошибка смены статуса";
         }
+        
+        $_SESSION['alert'] = $alert;
 
         $this->view->generate('task_view.php', 'template_view.php');
     }
