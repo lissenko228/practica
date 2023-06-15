@@ -18,12 +18,12 @@ class Controller_Task extends Controller
     {
         $desc = $_POST['desc'];
         $desc = addslashes($desc);
-
         $add_task = $_POST['add_task'];
         $id_user = $_SESSION['user']['id'];
 
         if ($add_task) {
-            if ($desc) {
+            if ( ! empty($desc)) {
+                
                 $data = array(
                     'id_user' => $id_user,
                     'description' => $desc
@@ -31,11 +31,13 @@ class Controller_Task extends Controller
         
                 $result = $this -> model->add_task($data);
     
-                if ($result) {
-                    $_SESSION['alert'] = "Задача добавлена";
-                } else {
+                if ( ! $result) {
                     $_SESSION['alert'] = "Задачу добавить не удалось";
                 }
+                $_SESSION['alert'] = "Задача добавлена";
+                
+            } else {
+                $_SESSION['alert'] = "Заполните все поля";
             }
         }
 
@@ -49,11 +51,10 @@ class Controller_Task extends Controller
         if ($id) {
             $result = $this -> model -> del_task($id);
 
-            if ($result) {
-                $_SESSION['alert'] = "Задача удалена";
-            } else {
+            if ( ! $result) {
                 $_SESSION['alert'] = "Задачу удалить не удалось";
-            }
+            } 
+            $_SESSION['alert'] = "Задача удалена";
         }
 
         $this -> view -> generate('task_view.php', 'template_view.php');
@@ -67,11 +68,10 @@ class Controller_Task extends Controller
         if ($del) {
             $result = $this -> model -> del_all($id_user);
 
-            if ($result) {
-                $_SESSION['alert'] = "Задачи удалены";
-            } else {
+            if ( ! $result) {
                 $_SESSION['alert'] = "Задачи удалить не удалось";
-            }
+            } 
+            $_SESSION['alert'] = "Задачи удалены";
         } else {
             $_SESSION['alert'] = "Задачи удалить не удалось";
         }
@@ -96,11 +96,10 @@ class Controller_Task extends Controller
 
                     $result = $this -> model -> status_task($status, $id);
 
-                    if ($result) {
-                        $_SESSION['alert'] = "Статус изменен";
-                    } else {
+                    if ( ! $result) {
                         $_SESSION['alert'] = "Ошибка смены статуса";
                     }
+                    $_SESSION['alert'] = "Статус изменен";
 
                 } elseif ($status == 2) {
                     
@@ -108,11 +107,10 @@ class Controller_Task extends Controller
 
                     $result = $this -> model -> status_task($status, $id);
 
-                    if ($result) {
-                        $_SESSION['alert'] = "Статус изменен";
-                    } else {
+                    if ( ! $result) {
                         $_SESSION['alert'] = "Ошибка смены статуса";
                     }
+                    $_SESSION['alert'] = "Статус изменен";
 
                 } else {
                     $_SESSION['alert'] = "Ошибка смены статуса";
@@ -139,11 +137,10 @@ class Controller_Task extends Controller
             if ($id_user) {  
                 $result = $this -> model -> status_all($id_user);
 
-                if ($result) {
-                    $_SESSION['alert'] = "Статус изменен";
-                } else {
+                if ( ! $result) {
                     $_SESSION['alert'] = "Ошибка смены статуса";
                 }
+                $_SESSION['alert'] = "Статус изменен";
             }
         }
 
